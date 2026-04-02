@@ -48,25 +48,6 @@ name = "pypi"
 url = "https://pypi.org/simple/"
 default = true
 
-[[tool.uv.index]]
-# Optional name for the index.
-name = "yiogit_yio"
-# Required URL for the index.
-url = "https://git.yio.at/api/packages/yio/pypi/simple"
-check-url = "https://git.yio.at/api/packages/yio/pypi/simple"
-publish-url = "https://git.yio.at/api/packages/yio/pypi"
-authenticate = "always"
-explicit = true
-
-
-[[tool.uv.index]]
-name = "yiopypi_deprecated"
-url = "https://pypi.yio.at/simple"
-check-url = "https://pypi.yio.at/simple"
-publish-url = "https://pypi.yio.at"
-explicit = true
-
-
 [tool.ruff]
 target-version="py311"
 
