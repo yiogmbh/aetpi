@@ -1,0 +1,96 @@
+[project]
+name = "aetpiref"
+version = "0.1.0"
+description = "aetpi - async external task processing interface"
+readme = "README.md"
+authors = [
+    { name = "Daniel Hofstetter", email = "hello@yio.at" },
+    { name = "Fritz Diener", email = "hello@yio.at"}
+]
+requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["uv_build>=0.9.28,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    { include-group = "test" },
+    { include-group = "lint"},
+    { include-group = "tox"},
+    { include-group = "b2v"},
+    "prek>=0.3.8",
+]
+lint = [
+    "ruff==0.15.8",
+    "ty==0.0.27",
+]
+test = [
+    "pytest>=8.1",
+    "pytest-cov==7.0.0",
+]
+# we use this dependency group to prepare the environment for running tests
+tox = [
+    "tox",
+    "tox-uv",
+    "keyring",
+]
+b2v = [
+    "bump-my-version>=1.2.6",
+]
+
+[tool.uv]
+keyring-provider = "subprocess"
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+default = true
+
+[[tool.uv.index]]
+# Optional name for the index.
+name = "yiogit_yio"
+# Required URL for the index.
+url = "https://git.yio.at/api/packages/yio/pypi/simple"
+check-url = "https://git.yio.at/api/packages/yio/pypi/simple"
+publish-url = "https://git.yio.at/api/packages/yio/pypi"
+authenticate = "always"
+explicit = true
+
+
+[[tool.uv.index]]
+name = "yiopypi_deprecated"
+url = "https://pypi.yio.at/simple"
+check-url = "https://pypi.yio.at/simple"
+publish-url = "https://pypi.yio.at"
+explicit = true
+
+
+[tool.ruff]
+target-version="py311"
+
+[tool.bumpversion]
+current_version = "0.1.0"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+serialize = ["{major}.{minor}.{patch}"]
+regex = false
+ignore_missing_version = false
+ignore_missing_files = false
+tag = false
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = true
+commit = false
+message = "Bump version: {current_version} → {new_version}"
+moveable_tags = []
+commit_args = ""
+setup_hooks = []
+pre_commit_hooks = []
+post_commit_hooks = []
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = "version = \"{current_version}\""
+replace = "version = \"{new_version}\""
