@@ -35,24 +35,31 @@ jobs:
 
   # publish (to pypi)
   publish:
-    environment: pypi
+    name: Publish Python 🐍 distribution 📦 to TestPyPI
+    needs: build
+    environment:
+      name: pypi
+      # Replace <package-name> with your PyPI project name
+      url: https://pypi.org/p/aetpiref
+    permissions:
+      id-token: write  # IMPORTANT: mandatory for trusted publishing
+
     runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
     steps:
       - name: Download a single artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: built-pypi-package
-      - name: echo only
-        run: |
-          ls -alh *
-      - name: echo
-        run: |
-          echo "hello"
+          path: dist
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
   # create github release
   release:
+    needs: build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -72,10 +79,12 @@ jobs:
         run: |
           echo "changes=$(git cliff --current --strip header)" >> $GITHUB_OUTPUT
 
-      - name: Download a single artifact
+      - name: download artifact
         uses: actions/download-artifact@v5
         with:
           name: built-pypi-package
+          path: dist
+
       - name: Publish to GitHub
         uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # v2
         with:

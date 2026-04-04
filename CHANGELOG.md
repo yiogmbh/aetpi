@@ -10,14 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📚 Documentation
 
-- *(setup)* Add git-cliff to support changelogs
+- *(setup)* Add initial changelog setup
 
 ### ⚙️ Miscellaneous Tasks
 
-- *(setup)* Remove yio specific indices from pyproject.toml
-- *(cicd)* Add initial draft for verification pipeline
-- *(cicd)* Add action and workflow to check versioning
-- *(cicd)* Add workflow to test some things
+- *(cicd)* Add workflows for (prepare) release
 
 
 ## [0.1.4] - 2026-04-02
