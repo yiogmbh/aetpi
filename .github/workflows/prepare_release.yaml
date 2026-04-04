@@ -1,0 +1,54 @@
+name: Create / Trigger release
+on:
+  workflow_dispatch:
+
+concurrency:
+  cancel-in-progress: false
+  group: prepare-release
+
+jobs:
+  # prepare new release
+  # - compute new version (check if change)
+  # - bump version (pyproject.toml)
+  # - update changelog
+  # - create tag
+  # - commit + push tag (should finally trigger build and publish)
+  prepare:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: setup uv
+        uses: astral-sh/setup-uv@v8.0.0
+      - name: setup git-cliff
+        uses: taiki-e/install-action@git-cliff
+
+
+      - name: checks
+        id: checks
+        uses: ./.github/actions/cliff-version
+
+      - name: bump version (uv)
+        if: ${{ steps.checks.outputs.requires_release }}
+        run: |
+          uv version "${{ steps.checks.outputs.bumped }}"
+
+      - name: update changelog
+        if: ${{ steps.checks.outputs.requires_release }}
+        run: |
+          git cliff --bump > CHANGELOG.md
+
+      - name: commit & create tag
+        if: ${{ steps.checks.outputs.requires_release }}
+        run: |
+          git add pyproject.toml CHANGELOG.md
+          git commit -m "chore(release): prepare for ${{ steps.checks.outputs.bumped }}"
+          git tag "${{ steps.checks.outputs.bumped }}"
+          git push --follow-tags
