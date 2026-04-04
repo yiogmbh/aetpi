@@ -21,6 +21,7 @@ dev = [
     { include-group = "tox"},
     { include-group = "b2v"},
     "prek>=0.3.8",
+    "git-cliff"
 ]
 lint = [
     "ruff==0.15.8",
