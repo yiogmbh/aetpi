@@ -10,6 +10,12 @@ authors = [
 requires-python = ">=3.11"
 dependencies = []
 
+[project.urls]
+Repository = "https://github.com/yiogmbh/aetpi.git"
+Issues = "https://github.com/yiogmbh/aetpi/issues"
+Changelog="https://github.com/yiogmbh/aetpi/blob/main/CHANGELOG.md"
+
+
 [build-system]
 requires = ["uv_build>=0.9.28,<0.10.0"]
 build-backend = "uv_build"
