@@ -1,6 +1,6 @@
 [project]
 name = "aetpiref"
-version = "0.1.5"
+version = "0.1.6"
 description = "aetpi - async external task processing interface"
 readme = "README.md"
 authors = [
