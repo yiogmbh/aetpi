@@ -1,59 +1,17 @@
-
 name: Lint & Test
 on:
   pull_request:
     branches:
       - main
-  workflow_call:
+  push:
+    branches:
+      - main
 
 
 jobs:
-
-  python-tests:
-    # for now disable python-tests, as the project lacks tests right now
-    if: false
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v8.0.0
-      - name: pytest
-        uses: yiogmbh/yio-actions/python/uv-tox@v2
-        with:
-          environment: ruff  # just for now execute linting twice ...
-
-  python-lint:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v8.0.0
-      - name: pytest
-        uses: yiogmbh/yio-actions/python/uv-tox@v2
-        with:
-          environment: ruff,ty
-
-  python-build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v6
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v8.0.0
-      - name: build
-        uses: yiogmbh/yio-actions/python/uv-build@v2
-      - name: verify
-        run: |
-          uv run --with dist/*.whl --no-project -- python -c "import aetpiref"
+  verify:
+    uses: ./.github/workflows/reusable_verify.yaml
+    with:
+      build: true
+      lint: true
+      test: false
