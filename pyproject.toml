@@ -8,7 +8,9 @@ authors = [
     { name = "Fritz Diener", email = "hello@yio.at"}
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "typing-extensions>=4.16.0",
+]
 
 [project.urls]
 Repository = "https://github.com/yiogmbh/aetpi.git"
@@ -26,16 +28,16 @@ dev = [
     { include-group = "lint"},
     { include-group = "tox"},
     { include-group = "b2v"},
-    "prek>=0.3.8",
+    "prek>=0.4.10",
     "git-cliff"
 ]
 lint = [
-    "ruff==0.15.8",
-    "ty==0.0.27",
+    "ruff==0.16.0",
+    "ty==0.0.63",
 ]
 test = [
-    "pytest>=8.1",
-    "pytest-cov==7.0.0",
+    "pytest>=9.1.1",
+    "pytest-cov==7.1.0",
 ]
 # we use this dependency group to prepare the environment for running tests
 tox = [
@@ -44,7 +46,7 @@ tox = [
     "keyring",
 ]
 b2v = [
-    "bump-my-version>=1.2.6",
+    "bump-my-version>=1.4.1",
 ]
 
 [tool.uv]
