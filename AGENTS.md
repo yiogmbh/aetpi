@@ -36,6 +36,7 @@ uv version <new-version>          # bump version in pyproject.toml
 
 ## Conventions
 
+- Feature branches use `feature/<name>` prefix (not `feat/`).
 - Conventional commits required for changelog generation (`git-cliff`).
 - `ruff` handles both linting and formatting — always run both.
 - `ty` for static type analysis (not mypy/pyright).

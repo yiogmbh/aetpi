@@ -207,6 +207,7 @@ class ExternalTaskExecuteCompleteEvent(TypedDict):
 
     type: Literal["externaltask.execute.complete"]
     variables: dict[str, Any] | None
+    local_variables: dict[str, Any] | None
 
 
 class ExternalTaskExecuteAbortEvent(TypedDict):
