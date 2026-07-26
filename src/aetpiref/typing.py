@@ -336,6 +336,29 @@ class ExternalTaskExtendLockEvent(TypedDict):
     lock_duration: int
 
 
+class ExternalTaskVariableFetchEvent(TypedDict):
+    """
+    Event triggered by an aetpi application to fetch a binary variable.
+    The server should write the variable data to the specified path.
+    """
+
+    type: Literal["externaltask.variable.fetch"]
+    transaction: str
+    variable_name: str
+    file_path: str
+
+
+class ExternalTaskVariableFetchCompletedEvent(TypedDict):
+    type: Literal["externaltask.variable.fetch.completed"]
+    transaction: str
+
+
+class ExternalTaskVariableFetchFailedEvent(TypedDict):
+    type: Literal["externaltask.variable.fetch.failed"]
+    transaction: str
+    error_message: str
+
+
 class LifespanScope(TypedDict, total=True):
     type: Literal["lifespan"]
     aetpi: AETPIVersions
@@ -386,6 +409,9 @@ AETPIReceiveEvent = Union[  # noqa: UP007
     LifespanShutdownEvent,
     # Request for capabilities
     CapabilitiesRequestEvent,
+    # Response for variable fetch
+    ExternalTaskVariableFetchCompletedEvent,
+    ExternalTaskVariableFetchFailedEvent,
 ]
 AETPISendEvent = Union[  # noqa: UP007
     # Answer to LockRequest
@@ -404,6 +430,8 @@ AETPISendEvent = Union[  # noqa: UP007
     # Request for signals / messages
     ExternalTaskEmitSignalEvent,
     ExternalTaskCorrelateMessageEvent,
+    # Request for variable fetch
+    ExternalTaskVariableFetchEvent,
     # Answer to lifespan events
     LifespanStartupCompleteEvent,
     LifespanStartupFailedEvent,
