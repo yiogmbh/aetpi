@@ -1,11 +1,18 @@
 import sys
+from collections.abc import Awaitable, Callable
 from datetime import datetime
-from typing import Callable, Literal, Awaitable, Union, Any
+from typing import Any, Literal, Union
+
+from typing_extensions import sentinel
 
 if sys.version_info >= (3, 12):
     from typing import TypedDict
 else:
     from typing_extensions import TypedDict
+
+
+NO_TENANT = sentinel("NO_TENANT")
+TENANT_UNSPECIFIED = sentinel("TENANT_UNSPECIFIED")
 
 
 class AETPIVersions(TypedDict):
@@ -237,6 +244,87 @@ class ExternalTaskExecuteBusinessErrorEvent(TypedDict):
     variables: dict[str, Any] | None
 
 
+class ExternalTaskEmitSignalEvent(TypedDict):
+    """
+    Event triggered by an aetpi application to emit a signal to various
+    matching subscribers
+    """
+
+    type: Literal["externaltask.signal.emit"]
+    transaction: str
+
+    signal_name: str
+    variables: dict[str, Any] | None
+    tenant_id: str | NO_TENANT | TENANT_UNSPECIFIED | None
+
+
+class ExternalTaskSignalEmittedEvent(TypedDict):
+    type: Literal["externaltask.signal.emitted"]
+    transaction: str
+
+
+class ExternalTaskSignalFailureEvent(TypedDict):
+    type: Literal["externaltask.signal.error"]
+    transaction: str
+    error_message: str
+
+
+class ExternalTaskCorrelateMessageEvent(TypedDict):
+    """
+    Event triggered by an aetpi application to correlate a message to various
+    message subscribers
+    """
+
+    type: Literal["externaltask.message.correlate"]
+    transaction: str
+
+    message_name: str
+
+    process_instance_id: str | None
+    business_key: str | None
+    tenant_id: str | NO_TENANT | TENANT_UNSPECIFIED | None
+
+    variables: dict[str, Any] | None
+    local_variables: dict[str, Any] | None
+    scoped_variables: dict[str, Any] | None
+
+    multicast: bool
+
+
+class ProcessInstance(TypedDict):
+    id: str
+    definition_id: str
+    business_key: str | None
+    tenant_id: str | None
+
+
+class Execution(TypedDict):
+    id: str
+    process_instance_id: str
+    tenant_id: str | None
+
+
+class MessageDeliveryRecipient(TypedDict):
+    type: Literal["start_event", "itermediate_catch_event"]
+    process_instance: ProcessInstance | None
+    execution: Execution | None
+    variables: dict[str, Any] | None
+
+
+class ExternalTaskMessageDeliveredEvent(TypedDict):
+    type: Literal["externaltask.message.delivered"]
+    transaction: str
+
+    recipients: list[MessageDeliveryRecipient]
+
+
+class ExternalTaskMessageFailureEvent(TypedDict):
+    type: Literal["externaltask.message.error"]
+    transaction: str
+
+    error_message: str
+
+
 class ExternalTaskExtendLockEvent(TypedDict):
     """
     Event triggered by an aetpi application if the lock of an external task
@@ -281,19 +369,24 @@ class LifespanShutdownFailedEvent(TypedDict, total=True):
     message: str
 
 
-AETPIReceiveEvent = Union[
+AETPIReceiveEvent = Union[  # noqa: UP007
     ExternalTaskStartEvent,
     ExternalTaskEndEvent,
     ExternalTaskLockRequestEvent,
     ExternalTaskExecuteRequestEvent,
     ExternalTaskExecuteStartEvent,
+    # Response for signals / messages
+    ExternalTaskSignalEmittedEvent,
+    ExternalTaskSignalFailureEvent,
+    ExternalTaskMessageDeliveredEvent,
+    ExternalTaskMessageFailureEvent,
     # Request for startup
     LifespanStartupEvent,
     LifespanShutdownEvent,
     # Request for capabilities
     CapabilitiesRequestEvent,
 ]
-AETPISendEvent = Union[
+AETPISendEvent = Union[  # noqa: UP007
     # Answer to LockRequest
     ExternalTaskLockAcceptEvent,
     ExternalTaskLockRejectEvent,
@@ -307,6 +400,9 @@ AETPISendEvent = Union[
     ExternalTaskExecuteAbortEvent,
     # Others
     ExternalTaskExtendLockEvent,
+    # Request for signals / messages
+    ExternalTaskEmitSignalEvent,
+    ExternalTaskCorrelateMessageEvent,
     # Answer to lifespan events
     LifespanStartupCompleteEvent,
     LifespanStartupFailedEvent,
